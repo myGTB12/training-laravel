@@ -1,0 +1,65 @@
+service:
+  app:
+    build:
+      context: .
+      dockerfile: docker/laravel/Dockerfile
+    container_name: laravel
+    working_dir: /var/www
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./src:/var/www
+    networks:
+      - app_network
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: [
+        "CMD-SHELL",
+        "php -r \"exit((new PDO('mysql:host=svkara_mysql;dbname=laravel','root','root'))->query('SELECT COUNT(*) FROM entries')->fetchColumn() > 0 ? 0 : 1);\""
+      ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  mysql:
+    build:
+      context: docker/mysql
+      dockerfile: Dockerfile
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+
+  nginx:
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/var/www
+    networks:
+      - app_network
+    depends_on:
+      app:
+        condition: service_healthy
