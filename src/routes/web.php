@@ -14,5 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('login');
 });
+Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register-form');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login-form');
