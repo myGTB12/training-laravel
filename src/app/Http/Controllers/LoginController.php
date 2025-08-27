@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -10,13 +11,13 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
-        return view('login');
+        return view('login.blade.php');
     }
 
 
     public function login(Request $request)
     {
-        $validated->$request->validate([
+        $validated = $request->validate([
             'login' => 'required|string',
             'password' => 'required|string',
         ]);

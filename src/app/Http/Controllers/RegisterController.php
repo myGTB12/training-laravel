@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\RedirectResponse;
 
 class RegisterController extends Controller
 {
@@ -32,6 +33,6 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('login-form')->with('success', 'Đăng ký thành công!');
+        return redirect()->route('home')->with('success', 'Đăng ký thành công!');
     }
 }
