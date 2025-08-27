@@ -16,9 +16,9 @@ class RegisterController extends Controller
     }
 
 
-    public function register(Request $request)
+    public function register(Request $request):RedirectResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'email' => 'required|email|unique:users,email',
             'username' => 'required|string|unique:users,username',
             'password' => 'required|min:6',
@@ -32,6 +32,6 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('home')->with('success', 'Đăng ký thành công!');
+        return redirect()->route('login-form')->with('success', 'Đăng ký thành công!');
     }
 }
