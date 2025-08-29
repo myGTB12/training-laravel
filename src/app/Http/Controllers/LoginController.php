@@ -11,15 +11,13 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
-        return view('login.blade.php');
+        return view('login');
     }
 
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $validated = $request->validate([
-            'login' => 'required|string',
-            'password' => 'required|string',
+        $validated = $request->validated([
         ]);
 
         $loginType = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
@@ -31,22 +29,18 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->route('login-form')->with('success', 'Đăng nhập thành công!');
+            return redirect()->route('home')->with('success', 'Đăng nhập thành công!');
         }
 
         return back()->withErrors([
             'login' => 'Email/Username hoặc mật khẩu không đúng!',
-        ]);
-        return view('login');
+        ]);    
     }
 
 
     public function store(Request $request):RedirectResponse
     {
-        $validated = $request->validate([
-            'login'    => ['required', 'string'],
-            'password' => ['required', 'string'],
-        ])
+        $validated = $request->validated();
 
         return redirect()->route('login-form')->with('success', 'Bạn đã đăng xuất!');
     }

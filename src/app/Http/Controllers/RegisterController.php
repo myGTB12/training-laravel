@@ -17,13 +17,9 @@ class RegisterController extends Controller
     }
 
 
-    public function register(Request $request):RedirectResponse
+    public function register(RegisterRequest $request):RedirectResponse
     {
-        $validated = $request->validate([
-            'email' => 'required|email|unique:users,email',
-            'username' => 'required|string|unique:users,username',
-            'password' => 'required|min:6',
-        ]);
+        $validated = $request->validate();
 
         $user = User::create([
             'email' => $request->email,
